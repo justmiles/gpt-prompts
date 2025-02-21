@@ -6,6 +6,8 @@ trigger:
   event:
     - push
     - pull_request
+    - tag
+    - custom
 
 steps:
   - name: install
@@ -27,7 +29,7 @@ steps:
       event:
         - pull_request
 
-  - name: build-and-push
+  - name: build-and-push-main
     image: plugins/docker
     settings:
       repo: justmiles/gpt-prompts
@@ -57,3 +59,18 @@ steps:
         - push
       branch:
         - main
+
+  - name: build-and-push-tag
+    image: plugins/docker
+    settings:
+      repo: justmiles/gpt-prompts
+      tags:
+        - ${DRONE_TAG}
+      dockerfile: Dockerfile
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+    when:
+      event:
+        - tag
