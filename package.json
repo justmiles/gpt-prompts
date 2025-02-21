@@ -1,7 +1,7 @@
 {
   "name": "gpt-prompt-sharing",
   "private": true,
-  "version": "1.2.6",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "tsx src/scripts/generate-content.ts && vite",
@@ -53,21 +53,13 @@
     "semantic-release": "^23.0.2"
   },
   "release": {
-    "branches": [
-      "main"
-    ],
+    "branches": ["main"],
     "plugins": [
-      [
-        "@semantic-release/commit-analyzer",
-        {
-          "releaseRules": [
-            {
-              "type": "*",
-              "release": "patch"
-            }
-          ]
-        }
-      ],
+      ["@semantic-release/commit-analyzer", {
+        "releaseRules": [
+          {"type": "*", "release": "patch"}
+        ]
+      }],
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
       "@semantic-release/npm",

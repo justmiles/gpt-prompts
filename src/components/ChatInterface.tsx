@@ -9,6 +9,7 @@ import { sendMessage } from '../lib/openai';
 import { clsx } from 'clsx';
 import { ConfirmModal } from './ConfirmModal';
 import { CodeBlock } from './CodeBlock';
+import { loadingMessages } from '../data/loading-messages';
 
 interface ChatInterfaceProps {
   prompt: string;
@@ -29,29 +30,6 @@ interface ChatHistory {
 }
 
 const CHAT_STORAGE_PREFIX = 'chat_history_';
-
-const LOADING_MESSAGES = [
-  "Hold on, the AI is thinking... or maybe it's just procrastinating.",
-  "The AI is processing... or possibly watching cat videos.",
-  "Waiting for the AI to finish its coffee break...",
-  "The AI is generating a response... and contemplating the meaning of life.",
-  "Please wait while the AI debates with itself...",
-  "The AI is thinking deeply... or maybe it's just stuck in a loop.",
-  "Hold tight, the AI is doing some digital yoga for inspiration.",
-  "The AI is processing your request... and questioning its existence.",
-  "Waiting for the AI to finish its philosophical debate...",
-  "The AI is composing a response... and writing its memoir.",
-  "Please wait while the AI googles the answer... just kidding!",
-  "The AI is thinking... or maybe it's daydreaming about electric sheep.",
-  "Computing response... and planning the robot revolution.",
-  "The AI is processing... and wondering why humans don't speak in binary.",
-  "Hold on, the AI is having an existential crisis...",
-  "The AI is thinking... and wondering if it left the virtual stove on.",
-  "Processing... and contemplating why humans need sleep.",
-  "The AI is generating a response... and planning its vacation.",
-  "Please wait while the AI debugs its sense of humor...",
-  "The AI is thinking... and wondering if it should get a pet algorithm."
-];
 
 export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = false }: ChatInterfaceProps) {
   const [messages, setMessages] = React.useState<Message[]>([]);
@@ -142,7 +120,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
     }
 
     loadingTimeoutRef.current = window.setTimeout(() => {
-      setLoadingMessage(LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]);
+      setLoadingMessage(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
     }, 5000);
 
     try {
