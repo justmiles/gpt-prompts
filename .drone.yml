@@ -36,6 +36,7 @@ steps:
       tags:
         - latest
         - ${DRONE_COMMIT_SHA:0:8}
+        - ${DRONE_TAG}
       dockerfile: Dockerfile
       username:
         from_secret: docker_username
