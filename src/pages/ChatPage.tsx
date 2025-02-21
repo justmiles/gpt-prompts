@@ -63,7 +63,7 @@ export function ChatPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <Header />
-      <div className="flex-1 max-w-[90%] mx-auto px-4 py-6">
+      <div className="flex-1 w-[80%] mx-auto px-4 py-6">
         {showOpenAISetup ? (
           <OpenAISetup
             onClose={() => setShowOpenAISetup(false)}
