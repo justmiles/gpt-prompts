@@ -81,7 +81,7 @@ export function PromptPage() {
   };
 
   const handleChatClick = () => {
-    const apiKey = sessionStorage.getItem('openai_api_key');
+    const apiKey = localStorage.getItem('openai_api_key');
     if (!apiKey) {
       setShowOpenAISetup(true);
     } else {
@@ -242,7 +242,7 @@ export function PromptPage() {
         <OpenAISetup
           onClose={() => {
             setShowOpenAISetup(false);
-            const apiKey = sessionStorage.getItem('openai_api_key');
+            const apiKey = localStorage.getItem('openai_api_key');
             if (apiKey) {
               navigate(`/prompt/${slug}/chat`);
             }

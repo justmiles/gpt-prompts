@@ -66,7 +66,13 @@ export function ChatPage() {
       <div className="flex-1 w-[80%] mx-auto px-4 py-6">
         {showOpenAISetup ? (
           <OpenAISetup
-            onClose={() => setShowOpenAISetup(false)}
+            onClose={() => {
+              setShowOpenAISetup(false);
+              const apiKey = localStorage.getItem('openai_api_key');
+              if (apiKey) {
+                navigate(`/prompt/${slug}/chat`);
+              }
+            }}
           />
         ) : (
           <ChatInterface
