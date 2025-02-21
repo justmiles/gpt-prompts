@@ -287,7 +287,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
                     message.role === 'user'
                       ? 'prose-invert'
                       : 'dark:prose-invert'
-                  } prose-sm max-w-none flex-1`}>
+                  } prose-sm max-w-none flex-1 overflow-x-auto`}>
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={components}

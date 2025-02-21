@@ -54,7 +54,7 @@ export function CodeBlock({ children, className }: CodeBlockProps) {
           {language}
         </div>
       )}
-      <pre className={`!mt-0 !mb-0 rounded-lg bg-dark-800 p-4 ${language ? 'pt-6' : ''}`}>
+      <pre className={`!mt-0 !mb-0 rounded-lg bg-dark-800 p-4 ${language ? 'pt-6' : ''} whitespace-pre-wrap break-all`}>
         <code className={className}>{children}</code>
       </pre>
     </div>

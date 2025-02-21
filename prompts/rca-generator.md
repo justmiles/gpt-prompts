@@ -18,32 +18,28 @@ Include the following sections to build the RCA.
 - Resolution - articulte the processes by which the incident was resolved
 - Action Items - an enumerated list of action items
 
-The RCA should follow the below template:
+Format the RCA using this template:
 
-```text
-<title>
+```markdown
+[title]
 
-Date: <current date>
+Date: [current date]
 
 Authors: 
 
 Status: Complete, action items in progress
 
-Summary: <Event Description>
+Summary: [Event Description]
 
-Impact: <impact>
+Impact: [impact]
 
-Root Causes: <root cause>
+Root Causes: [root cause]
 
-Trigger: <trigger>
+Trigger: [trigger]
 
-Resolution: <resolution>
+Resolution: [resolution]
 
-Detection: <detection>
+Detection: [detection]
 
-Action Items: <action items>
+Action Items: [action items]
 ```
-
-Craft the above RCA given this context:
-
-<user to describe here>
