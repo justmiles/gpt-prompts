@@ -22,30 +22,49 @@ A modern web application for discovering, sharing, and managing GPT prompts. Bui
 
 ### Installation
 
-1. Clone the repository:
+#### Local Development
 
+1. Clone the repository:
 ```bash
 git clone https://github.com/yourusername/gpt-prompt-library.git
 cd gpt-prompt-library
 ```
 
 2. Install dependencies:
-
 ```bash
 npm install
 ```
 
 3. Create a `.env` file in the root directory with your Supabase credentials:
-
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 4. Start the development server:
-
 ```bash
 npm run dev
+```
+
+#### Docker Deployment
+
+1. Build and run with Docker Compose:
+```bash
+docker compose up -d
+```
+
+The application will be available at `http://localhost:8080`
+
+2. Or build and run manually:
+```bash
+# Build the image
+docker build -t gpt-prompt-library .
+
+# Run the container
+docker run -p 8080:80 \
+  -e VITE_SUPABASE_URL=your_supabase_url \
+  -e VITE_SUPABASE_ANON_KEY=your_supabase_anon_key \
+  gpt-prompt-library
 ```
 
 ## Contributing
@@ -54,7 +73,6 @@ npm run dev
 
 1. Create a new Markdown file in the `/prompts` directory
 2. Include the required frontmatter:
-
 ```md
 ---
 title: Your Prompt Title
@@ -84,6 +102,7 @@ Your prompt content here...
 - **Icons**: Lucide React
 - **Markdown**: React Markdown
 - **Build Tool**: Vite
+- **Deployment**: Docker, Nginx
 
 ## License
 

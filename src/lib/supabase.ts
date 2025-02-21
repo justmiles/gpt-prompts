@@ -1,10 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Get environment variables from window._env_ if available (for runtime configuration)
+// or fall back to import.meta.env (for build-time configuration)
+const getEnvVar = (key: string): string => {
+  const runtimeValue = (window as any)._env_?.[key];
+  const buildTimeValue = import.meta.env[key];
+  
+  const value = runtimeValue || buildTimeValue;
+  
+  if (!value) {
+    throw new Error(`Missing environment variable: ${key}`);
+  }
+  
+  return value;
+};
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
+const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
+const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
