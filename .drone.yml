@@ -6,8 +6,7 @@ trigger:
   event:
     - push
     - pull_request
-    - custom
-    
+
 steps:
   - name: install
     image: node:20-slim
