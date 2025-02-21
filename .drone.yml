@@ -1,0 +1,46 @@
+kind: pipeline
+type: docker
+name: test-and-build
+
+trigger:
+  event:
+    - push
+    - pull_request
+
+steps:
+  - name: install
+    image: node:20-slim
+    commands:
+      - npm ci
+
+  - name: validate-markdown
+    image: node:20-slim
+    commands:
+      - npm run test:markdown
+
+  - name: build-test
+    image: plugins/docker
+    settings:
+      dry_run: true
+      dockerfile: Dockerfile
+    when:
+      event:
+        - pull_request
+
+  - name: build-and-push
+    image: plugins/docker
+    settings:
+      repo: justmiles/gpt-prompts
+      tags:
+        - latest
+        - ${DRONE_COMMIT_SHA:0:8}
+      dockerfile: Dockerfile
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+    when:
+      event:
+        - push
+      branch:
+        - main
