@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PromptCard } from './components/PromptCard';
 import { PromptPage } from './pages/PromptPage';
-import { Search, SlidersHorizontal, Moon, Sun } from 'lucide-react';
+import { Search, SlidersHorizontal, Moon, Sun, Github } from 'lucide-react';
 import { loadPrompts } from './data/prompts';
 import { useTheme } from './context/ThemeContext';
 import { useUpvotes } from './hooks/useUpvotes';
@@ -55,7 +55,7 @@ function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <header className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
@@ -73,7 +73,7 @@ function HomePage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
@@ -119,6 +119,28 @@ function HomePage() {
           ))}
         </div>
       </main>
+
+      <footer className="bg-white dark:bg-gray-800 shadow-sm mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-center md:text-left">
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Want to contribute?</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Add your own prompts by creating a pull request on GitHub.
+              </p>
+            </div>
+            <a
+              href="https://github.com/justmiles/gpt-prompts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-700 rounded-md hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
+            >
+              <Github size={16} />
+              View on GitHub
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
