@@ -18,7 +18,7 @@ export function PromptCard({ prompt, upvotes, onUpvote }: PromptCardProps) {
   });
 
   const handleUpvote = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click when upvoting
+    e.stopPropagation();
     if (!isUpvoted) {
       setIsUpvoted(true);
       Cookies.set(`upvote-${prompt.slug}`, 'true', { expires: 365 });
@@ -27,7 +27,7 @@ export function PromptCard({ prompt, upvotes, onUpvote }: PromptCardProps) {
   };
 
   const handleShare = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click when sharing
+    e.stopPropagation();
     const url = `${window.location.origin}/prompt/${prompt.slug}`;
     navigator.clipboard.writeText(url);
     alert('Prompt URL copied to clipboard!');
@@ -36,38 +36,38 @@ export function PromptCard({ prompt, upvotes, onUpvote }: PromptCardProps) {
   return (
     <div 
       onClick={() => navigate(`/prompt/${prompt.slug}`)}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer"
+      className="bg-white dark:bg-dark-700 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer"
     >
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full">
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm font-medium text-olive-600 dark:text-olive-400 bg-olive-50 dark:bg-olive-900/30 px-3 py-1 rounded-full">
             {prompt.category}
           </span>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <button
               onClick={handleUpvote}
               className={clsx(
-                "flex items-center space-x-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors p-1",
-                isUpvoted && "text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+                "flex items-center space-x-2 text-gray-500 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-200 transition-colors p-1.5",
+                isUpvoted && "text-olive-600 dark:text-olive-400 hover:text-olive-700 dark:hover:text-olive-300"
               )}
               disabled={isUpvoted}
             >
-              <ArrowBigUp size={16} />
-              <span className="text-sm">{upvotes}</span>
+              <ArrowBigUp size={18} />
+              <span className="text-base">{upvotes}</span>
             </button>
             <button
               onClick={handleShare}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors p-1"
+              className="text-olive-500 dark:text-olive-400 hover:text-olive-600 dark:hover:text-olive-300 transition-colors p-1.5"
             >
-              <Share2 size={16} />
+              <Share2 size={18} />
             </button>
           </div>
         </div>
         
-        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-dark-100 mb-3">
           {prompt.title}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-300">
+        <p className="text-base text-gray-600 dark:text-dark-300">
           {prompt.description}
         </p>
       </div>

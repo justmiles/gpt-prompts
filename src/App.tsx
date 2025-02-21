@@ -2,10 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PromptCard } from './components/PromptCard';
 import { PromptPage } from './pages/PromptPage';
-import { Search, SlidersHorizontal, Moon, Sun, Github } from 'lucide-react';
+import { ChatPage } from './pages/ChatPage';
+import { Search, SlidersHorizontal, Moon, Sun, Github, Settings as SettingsIcon } from 'lucide-react';
 import { loadPrompts } from './data/prompts';
 import { useTheme } from './context/ThemeContext';
 import { useUpvotes } from './hooks/useUpvotes';
+import { SettingsMenu } from './components/SettingsMenu';
 import type { Prompt } from './data/prompts';
 
 function HomePage() {
@@ -14,6 +16,7 @@ function HomePage() {
   const [sortBy, setSortBy] = React.useState<'popular' | 'recent'>('popular');
   const [prompts, setPrompts] = React.useState<Prompt[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [showSettings, setShowSettings] = React.useState(false);
   const { theme, toggleTheme } = useTheme();
   const { upvotes, loading: upvotesLoading, upvotePrompt } = useUpvotes();
 
@@ -46,51 +49,61 @@ function HomePage() {
 
   if (loading || upvotesLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-800 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Loading prompts...</h1>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-dark-100 mb-4">Loading prompts...</h1>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <header className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-800 flex flex-col">
+      <header className="bg-white dark:bg-dark-700 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-6">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">GPT Prompt Library</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Discover and share powerful GPT prompts</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-dark-100">GPT Prompt Library</h1>
+              <p className="text-base text-gray-600 dark:text-dark-300 mt-2">Discover and share powerful GPT prompts</p>
             </div>
-            <button
-              onClick={toggleTheme}
-              className="p-1.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-            >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowSettings(true)}
+                className="p-2 rounded bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-dark-300 hover:bg-gray-200 dark:hover:bg-dark-500"
+                title="Settings"
+              >
+                <SettingsIcon size={20} />
+              </button>
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-dark-300 hover:bg-gray-200 dark:hover:bg-dark-500"
+                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme === 'dark' ? <Sun size={20} className="text-olive-500" /> : <Moon size={20} />}
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+      <main className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="flex-1 relative">
-            <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-dark-400" size={20} />
             <input
               type="text"
               placeholder="Search prompts..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 text-base border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-dark-100 placeholder-gray-400 dark:placeholder-dark-400 focus:ring-2 focus:ring-olive-500 dark:focus:ring-olive-600 focus:border-transparent"
             />
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-2.5 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
+              className="px-4 py-2.5 text-base border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-dark-100 focus:ring-2 focus:ring-olive-500 dark:focus:ring-olive-600 focus:border-transparent"
             >
               <option value="">All Categories</option>
               {categories.map(category => (
@@ -100,15 +113,15 @@ function HomePage() {
 
             <button
               onClick={() => setSortBy(prev => prev === 'popular' ? 'recent' : 'popular')}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="flex items-center gap-2 px-4 py-2.5 text-base border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-dark-100 hover:bg-gray-50 dark:hover:bg-dark-600"
             >
-              <SlidersHorizontal size={16} />
+              <SlidersHorizontal size={20} className="text-olive-500" />
               <span>{sortBy === 'popular' ? 'Popular' : 'Recent'}</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPrompts.map(prompt => (
             <PromptCard
               key={prompt.slug}
@@ -120,12 +133,12 @@ function HomePage() {
         </div>
       </main>
 
-      <footer className="bg-white dark:bg-gray-800 shadow-sm mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+      <footer className="bg-white dark:bg-dark-700 shadow-sm mt-auto">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left">
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Want to contribute?</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-dark-100 mb-3">Want to contribute?</h2>
+              <p className="text-base text-gray-600 dark:text-dark-300">
                 Add your own prompts by creating a pull request on GitHub.
               </p>
             </div>
@@ -133,14 +146,19 @@ function HomePage() {
               href="https://github.com/justmiles/gpt-prompts"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-700 rounded-md hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
+              className="inline-flex items-center gap-3 px-6 py-3 text-base font-medium text-white bg-olive-600 dark:bg-olive-700 rounded-lg hover:bg-olive-700 dark:hover:bg-olive-600 transition-colors"
             >
-              <Github size={16} />
+              <Github size={20} />
               View on GitHub
             </a>
           </div>
         </div>
       </footer>
+
+      <SettingsMenu
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   );
 }
@@ -151,6 +169,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/prompt/:slug" element={<PromptPage />} />
+        <Route path="/prompt/:slug/chat" element={<ChatPage />} />
       </Routes>
     </Router>
   );
