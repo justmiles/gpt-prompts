@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Share2, Moon, Sun, ArrowBigUp, Pencil } from 'lucide-react';
+import { ArrowLeft, Share2, Moon, Sun, ArrowBigUp, Pencil, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { loadPrompts } from '../data/prompts';
 import { useTheme } from '../context/ThemeContext';
@@ -16,6 +16,10 @@ export function PromptPage() {
   const { theme, toggleTheme } = useTheme();
   const { upvotes, upvotePrompt } = useUpvotes();
   const [isUpvoted, setIsUpvoted] = React.useState(false);
+  const [showShareConfirm, setShowShareConfirm] = React.useState(false);
+  const [showCopyConfirm, setShowCopyConfirm] = React.useState(false);
+  const shareConfirmTimeout = React.useRef<number>();
+  const copyConfirmTimeout = React.useRef<number>();
 
   React.useEffect(() => {
     loadPrompts()
@@ -33,12 +37,39 @@ export function PromptPage() {
       });
   }, [slug]);
 
+  React.useEffect(() => {
+    return () => {
+      if (shareConfirmTimeout.current) window.clearTimeout(shareConfirmTimeout.current);
+      if (copyConfirmTimeout.current) window.clearTimeout(copyConfirmTimeout.current);
+    };
+  }, []);
+
   const handleUpvote = () => {
     if (prompt && !isUpvoted) {
       setIsUpvoted(true);
       Cookies.set(`upvote-${prompt.slug}`, 'true', { expires: 365 });
       upvotePrompt(prompt.slug);
     }
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setShowShareConfirm(true);
+    if (shareConfirmTimeout.current) window.clearTimeout(shareConfirmTimeout.current);
+    shareConfirmTimeout.current = window.setTimeout(() => {
+      setShowShareConfirm(false);
+    }, 2000);
+  };
+
+  const handleCopyPrompt = () => {
+    if (!prompt) return;
+    const promptText = `${prompt.title}\n\n${prompt.content}`;
+    navigator.clipboard.writeText(promptText);
+    setShowCopyConfirm(true);
+    if (copyConfirmTimeout.current) window.clearTimeout(copyConfirmTimeout.current);
+    copyConfirmTimeout.current = window.setTimeout(() => {
+      setShowCopyConfirm(false);
+    }, 2000);
   };
 
   if (loading) {
@@ -63,11 +94,6 @@ export function PromptPage() {
       </div>
     );
   }
-
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    alert('URL copied to clipboard!');
-  };
 
   const sourceCodeUrl = `http://github.com/justmiles/gpt-prompts/blob/main/prompts/${prompt.slug}.md`;
 
@@ -96,6 +122,14 @@ export function PromptPage() {
               <ArrowBigUp size={16} />
               <span>{upvotes[prompt.slug] || 0}</span>
             </button>
+            <button
+              onClick={handleCopyPrompt}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+              title="Copy prompt"
+            >
+              {showCopyConfirm ? <Check size={16} /> : <Copy size={16} />}
+              <span>{showCopyConfirm ? 'Copied!' : 'Copy'}</span>
+            </button>
             <a
               href={sourceCodeUrl}
               target="_blank"
@@ -108,9 +142,10 @@ export function PromptPage() {
             <button
               onClick={handleShare}
               className="inline-flex items-center gap-1 px-2 py-1 rounded text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+              title="Share prompt"
             >
-              <Share2 size={16} />
-              <span>Share</span>
+              {showShareConfirm ? <Check size={16} /> : <Share2 size={16} />}
+              <span>{showShareConfirm ? 'Copied!' : 'Share'}</span>
             </button>
             <button
               onClick={toggleTheme}
