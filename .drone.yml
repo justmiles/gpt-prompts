@@ -53,6 +53,8 @@ steps:
       GH_TOKEN: 
         from_secret: github_token
     commands:
+      - apt-get update && apt-get install -y git
+      - git --version
       - npm ci
       - npx semantic-release --ci
     when:
