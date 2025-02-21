@@ -9,43 +9,13 @@ const getEnvVar = (key: string): string => {
   const value = runtimeValue || buildTimeValue;
   
   if (!value) {
-    throw new Error(`Missing required Supabase configuration: ${key}
-
-Please ensure you have set up your Supabase project and added the following environment variables:
-- VITE_SUPABASE_URL
-- VITE_SUPABASE_ANON_KEY
-
-You can get these values from your Supabase project settings.
-If you haven't set up Supabase yet, click the "Connect to Supabase" button in the top right corner.`);
+    throw new Error(`Missing environment variable: ${key}`);
   }
   
   return value;
 };
 
-// Validate Supabase configuration early
-const validateSupabaseConfig = () => {
-  try {
-    const url = getEnvVar('VITE_SUPABASE_URL');
-    const key = getEnvVar('VITE_SUPABASE_ANON_KEY');
-    
-    if (!url.startsWith('https://')) {
-      throw new Error('VITE_SUPABASE_URL must start with https://');
-    }
-    
-    if (key.length < 20) {
-      throw new Error('VITE_SUPABASE_ANON_KEY appears to be invalid (too short)');
-    }
-    
-    return { url, key };
-  } catch (error) {
-    // Add the error to both console and throw it to ensure it's visible
-    console.error('Supabase Configuration Error:', error);
-    throw error;
-  }
-};
+const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
+const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
 
-// Get and validate configuration
-const { url: supabaseUrl, key: supabaseAnonKey } = validateSupabaseConfig();
-
-// Create the Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

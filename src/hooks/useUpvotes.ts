@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabase';
 export function useUpvotes() {
   const [upvotes, setUpvotes] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     loadUpvotes();
@@ -26,10 +25,8 @@ export function useUpvotes() {
       }, {} as Record<string, number>);
 
       setUpvotes(upvotesMap);
-      setError(null);
     } catch (error) {
       console.error('Error loading upvotes:', error);
-      setError(error instanceof Error ? error : new Error('Failed to load upvotes'));
     } finally {
       setLoading(false);
     }
@@ -72,19 +69,16 @@ export function useUpvotes() {
         }));
       }
 
-      setError(null);
       // Refresh upvotes after modification
       loadUpvotes();
     } catch (error) {
       console.error('Error upvoting prompt:', error);
-      setError(error instanceof Error ? error : new Error('Failed to upvote prompt'));
     }
   }
 
   return {
     upvotes,
     loading,
-    error,
     upvotePrompt
   };
 }
