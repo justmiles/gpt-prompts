@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx scripts/generate-content.ts && vite",
-    "build": "tsx scripts/generate-content.ts && vite build",
+    "dev": "tsx src/scripts/generate-content.ts && vite",
+    "build": "tsx src/scripts/generate-content.ts && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

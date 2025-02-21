@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
-import type { Prompt } from '../src/data/types';
+import type { Prompt } from '../data/types';
 
 function extractFirstParagraph(content: string): string {
   const lines = content.split('\n').filter(line => line.trim() && !line.startsWith('#'));
