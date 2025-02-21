@@ -1,13 +1,14 @@
 import React from 'react';
-import { Settings } from 'lucide-react';
+import { Settings, Eye, EyeOff } from 'lucide-react';
 
 interface OpenAISetupProps {
   onClose: () => void;
 }
 
 export function OpenAISetup({ onClose }: OpenAISetupProps) {
-  const [apiKey, setApiKey] = React.useState('');
+  const [apiKey, setApiKey] = React.useState(() => localStorage.getItem('openai_api_key') || '');
   const [error, setError] = React.useState('');
+  const [showKey, setShowKey] = React.useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ export function OpenAISetup({ onClose }: OpenAISetupProps) {
       return;
     }
     
-    sessionStorage.setItem('openai_api_key', apiKey.trim());
+    localStorage.setItem('openai_api_key', apiKey.trim());
     onClose();
   };
 
@@ -33,14 +34,23 @@ export function OpenAISetup({ onClose }: OpenAISetupProps) {
             <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               OpenAI API Key
             </label>
-            <input
-              type="password"
-              id="apiKey"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
-              placeholder="sk-..."
-            />
+            <div className="relative">
+              <input
+                type={showKey ? "text" : "password"}
+                id="apiKey"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
+                placeholder="sk-..."
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey(!showKey)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
             {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
           </div>
           

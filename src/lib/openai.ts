@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 
 export function getOpenAIClient() {
-  const apiKey = sessionStorage.getItem('openai_api_key');
+  const apiKey = localStorage.getItem('openai_api_key');
   if (!apiKey) {
     throw new Error('OpenAI API key not found');
   }

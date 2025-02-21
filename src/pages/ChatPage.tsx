@@ -20,7 +20,7 @@ export function ChatPage() {
         setLoading(false);
 
         // Check for OpenAI API key and show setup if needed
-        const apiKey = sessionStorage.getItem('openai_api_key');
+        const apiKey = localStorage.getItem('openai_api_key');
         if (!apiKey) {
           setShowOpenAISetup(true);
         }

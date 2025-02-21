@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, X, Trash2, Key } from 'lucide-react';
+import { Settings, X, Trash2, Key, Eye, EyeOff } from 'lucide-react';
 import { ConfirmModal } from './ConfirmModal';
 
 interface SettingsMenuProps {
@@ -10,15 +10,16 @@ interface SettingsMenuProps {
 const CHAT_STORAGE_PREFIX = 'chat_history_';
 
 export function SettingsMenu({ isOpen, onClose }: SettingsMenuProps) {
-  const [apiKey, setApiKey] = React.useState(() => sessionStorage.getItem('openai_api_key') || '');
+  const [apiKey, setApiKey] = React.useState(() => localStorage.getItem('openai_api_key') || '');
   const [showPurgeConfirm, setShowPurgeConfirm] = React.useState(false);
   const [selectedDays, setSelectedDays] = React.useState<number | 'all'>(7);
+  const [showKey, setShowKey] = React.useState(false);
 
   const handleSaveApiKey = () => {
     if (apiKey.trim()) {
-      sessionStorage.setItem('openai_api_key', apiKey.trim());
+      localStorage.setItem('openai_api_key', apiKey.trim());
     } else {
-      sessionStorage.removeItem('openai_api_key');
+      localStorage.removeItem('openai_api_key');
     }
   };
 
@@ -80,13 +81,22 @@ export function SettingsMenu({ isOpen, onClose }: SettingsMenuProps) {
               <h3 className="text-lg font-medium text-gray-900 dark:text-dark-100">OpenAI API Key</h3>
             </div>
             <div className="space-y-3">
-              <input
-                type="password"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk-..."
-                className="w-full px-4 py-2 text-base border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-dark-100 placeholder-gray-400 dark:placeholder-dark-400 focus:ring-2 focus:ring-olive-500 dark:focus:ring-olive-400 focus:border-transparent"
-              />
+              <div className="relative">
+                <input
+                  type={showKey ? "text" : "password"}
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  placeholder="sk-..."
+                  className="w-full px-4 py-2 pr-10 text-base border border-gray-300 dark:border-dark-600 rounded-lg bg-white dark:bg-dark-700 text-gray-900 dark:text-dark-100 placeholder-gray-400 dark:placeholder-dark-400 focus:ring-2 focus:ring-olive-500 dark:focus:ring-olive-400 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowKey(!showKey)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
+                >
+                  {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
               <button
                 onClick={handleSaveApiKey}
                 className="w-full px-4 py-2 text-base font-medium text-white bg-olive-600 rounded-lg hover:bg-olive-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-olive-500"
