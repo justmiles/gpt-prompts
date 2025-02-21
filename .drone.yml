@@ -48,12 +48,13 @@ steps:
         - main
 
   - name: semantic-release
-    image: hoppr/semantic-release:latest
+    image: node:20-slim
     environment:
       GH_TOKEN: 
         from_secret: github_token
     commands:
-    - semantic-release
+      - npm ci
+      - npx semantic-release --ci
     when:
       event:
         - push
