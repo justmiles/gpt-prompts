@@ -3,11 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PromptCard } from './components/PromptCard';
 import { PromptPage } from './pages/PromptPage';
 import { ChatPage } from './pages/ChatPage';
-import { Search, SlidersHorizontal, Moon, Sun, Github, Settings as SettingsIcon } from 'lucide-react';
+import { Search, SlidersHorizontal, Github } from 'lucide-react';
 import { loadPrompts } from './data/prompts';
-import { useTheme } from './context/ThemeContext';
 import { useUpvotes } from './hooks/useUpvotes';
-import { SettingsMenu } from './components/SettingsMenu';
+import { Header } from './components/Header';
 import type { Prompt } from './data/prompts';
 
 function HomePage() {
@@ -16,8 +15,6 @@ function HomePage() {
   const [sortBy, setSortBy] = React.useState<'popular' | 'recent'>('popular');
   const [prompts, setPrompts] = React.useState<Prompt[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [showSettings, setShowSettings] = React.useState(false);
-  const { theme, toggleTheme } = useTheme();
   const { upvotes, loading: upvotesLoading, upvotePrompt } = useUpvotes();
 
   React.useEffect(() => {
@@ -59,32 +56,7 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-dark-800 flex flex-col">
-      <header className="bg-white dark:bg-dark-700 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-dark-100">GPT Prompt Library</h1>
-              <p className="text-base text-gray-600 dark:text-dark-300 mt-2">Discover and share powerful GPT prompts</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowSettings(true)}
-                className="p-2 rounded bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-dark-300 hover:bg-gray-200 dark:hover:bg-dark-500"
-                title="Settings"
-              >
-                <SettingsIcon size={20} />
-              </button>
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-dark-300 hover:bg-gray-200 dark:hover:bg-dark-500"
-                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              >
-                {theme === 'dark' ? <Sun size={20} className="text-olive-500" /> : <Moon size={20} />}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header showSearch />
 
       <main className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -154,11 +126,6 @@ function HomePage() {
           </div>
         </div>
       </footer>
-
-      <SettingsMenu
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-      />
     </div>
   );
 }

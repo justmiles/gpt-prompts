@@ -63,6 +63,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const copyTimeoutRef = React.useRef<number>();
   const loadingTimeoutRef = React.useRef<number>();
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   const components = {
     code: ({ node, inline, className, children, ...props }) => {
@@ -135,6 +136,11 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
     saveMessages(newMessages);
     setLoading(true);
 
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+
     loadingTimeoutRef.current = window.setTimeout(() => {
       setLoadingMessage(LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]);
     }, 5000);
@@ -177,6 +183,22 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
     localStorage.removeItem(storageKey);
     setMessages([]);
     setShowClearConfirm(false);
+  };
+
+  const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target;
+    setInput(textarea.value);
+    
+    // Auto-resize textarea
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
   };
 
   const containerClasses = fullPage
@@ -232,6 +254,20 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-center px-4">
+              <div className="text-6xl mb-4">
+                <FontAwesomeIcon icon={faRobot} className="text-olive-500 dark:text-olive-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-dark-100 mb-2">
+                How can I help?
+              </h2>
+              <p className="text-gray-600 dark:text-dark-300 max-w-lg">
+                I'm ready to help you with this prompt. Feel free to ask questions or request assistance.
+                You can use Shift + Enter for new lines in your messages.
+              </p>
+            </div>
+          )}
           {messages.map((message, index) => (
             <div key={index} className="w-full">
               <div className={clsx(
@@ -293,17 +329,22 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
 
         <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 dark:border-dark-600">
           <div className="flex gap-3">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 px-4 py-2.5 text-base border border-gray-300 dark:border-dark-600 rounded-lg shadow-sm bg-white dark:bg-dark-700 text-gray-900 dark:text-dark-100 focus:ring-2 focus:ring-olive-500 dark:focus:ring-olive-400 focus:border-transparent"
-            />
+            <div className="flex-1 relative">
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={handleTextareaInput}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message... (Shift + Enter for new line)"
+                rows={1}
+                className="w-full px-4 py-2.5 text-base border border-gray-300 dark:border-dark-600 rounded-lg shadow-sm bg-white dark:bg-dark-700 text-gray-900 dark:text-dark-100 focus:ring-2 focus:ring-olive-500 dark:focus:ring-olive-400 focus:border-transparent resize-none min-h-[42px] max-h-[200px] overflow-y-auto"
+                style={{ height: 'auto' }}
+              />
+            </div>
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="px-5 py-2.5 bg-olive-600 text-white rounded-lg hover:bg-olive-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-olive-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 bg-olive-600 text-white rounded-lg hover:bg-olive-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-olive-500 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             >
               <Send size={18} />
             </button>

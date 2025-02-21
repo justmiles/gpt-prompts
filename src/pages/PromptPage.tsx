@@ -1,16 +1,16 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Share2, Moon, Sun, ArrowBigUp, Pencil, Copy, Check, MessageSquare } from 'lucide-react';
+import { Share2, ArrowBigUp, Pencil, Copy, Check, MessageSquare } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faHome } from '@fortawesome/free-solid-svg-icons';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { loadPrompts } from '../data/prompts';
-import { useTheme } from '../context/ThemeContext';
 import { useUpvotes } from '../hooks/useUpvotes';
 import { OpenAISetup } from '../components/OpenAISetup';
 import { ChatInterface } from '../components/ChatInterface';
 import { CodeBlock } from '../components/CodeBlock';
+import { Header } from '../components/Header';
 import Cookies from 'js-cookie';
 import { clsx } from 'clsx';
 import type { Prompt } from '../data/types';
@@ -20,7 +20,6 @@ export function PromptPage() {
   const navigate = useNavigate();
   const [prompt, setPrompt] = React.useState<Prompt | null>(null);
   const [loading, setLoading] = React.useState(true);
-  const { theme, toggleTheme } = useTheme();
   const { upvotes, upvotePrompt } = useUpvotes();
   const [isUpvoted, setIsUpvoted] = React.useState(false);
   const [showShareConfirm, setShowShareConfirm] = React.useState(false);
@@ -107,9 +106,12 @@ export function PromptPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-800 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-lg font-bold text-gray-900 dark:text-dark-100 mb-4">Loading...</h1>
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-800 flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-dark-100 mb-4">Loading...</h1>
+          </div>
         </div>
       </div>
     );
@@ -117,12 +119,15 @@ export function PromptPage() {
 
   if (!prompt) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-800 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-lg font-bold text-gray-900 dark:text-dark-100 mb-4">Prompt not found</h1>
-          <Link to="/" className="text-olive-600 dark:text-olive-400 hover:text-olive-700 dark:hover:text-olive-300">
-            Return to home
-          </Link>
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-800 flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-dark-100 mb-4">Prompt not found</h1>
+            <Link to="/" className="text-olive-600 dark:text-olive-400 hover:text-olive-700 dark:hover:text-olive-300">
+              Return to home
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -131,10 +136,12 @@ export function PromptPage() {
   const sourceCodeUrl = `http://github.com/justmiles/gpt-prompts/blob/main/prompts/${prompt.slug}.md`;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-800">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-800 flex flex-col">
+      <Header />
+      
+      <div className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <Link
               to="/"
               className="inline-flex items-center text-sm text-gray-600 dark:text-dark-300 hover:text-gray-900 dark:hover:text-dark-100"
@@ -142,14 +149,6 @@ export function PromptPage() {
               <FontAwesomeIcon icon={faHome} className="mr-1" size="lg" />
               <span>Home</span>
             </Link>
-            <FontAwesomeIcon 
-              icon={faArrowLeft} 
-              className="text-gray-400 dark:text-dark-500" 
-              size="lg" 
-            />
-            <span className="text-sm text-gray-600 dark:text-dark-300">
-              {prompt.title}
-            </span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -197,12 +196,6 @@ export function PromptPage() {
             >
               {showShareConfirm ? <Check size={16} /> : <Share2 size={16} />}
               <span>{showShareConfirm ? 'Copied!' : 'Share'}</span>
-            </button>
-            <button
-              onClick={toggleTheme}
-              className="p-1 rounded bg-gray-100 dark:bg-dark-600 text-gray-600 dark:text-dark-300 hover:bg-gray-200 dark:hover:bg-dark-500"
-            >
-              {theme === 'dark' ? <Sun size={16} className="text-olive-500" /> : <Moon size={16} />}
             </button>
           </div>
         </div>
@@ -261,6 +254,7 @@ export function PromptPage() {
         <ChatInterface
           prompt={prompt.content}
           title={prompt.title}
+          promptSlug={prompt.slug}
           onClose={() => setShowChat(false)}
         />
       )}
