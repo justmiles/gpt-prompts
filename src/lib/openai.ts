@@ -1,5 +1,10 @@
 import OpenAI from 'openai';
 
+interface Message {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
 export function getOpenAIClient() {
   const apiKey = localStorage.getItem('openai_api_key');
   if (!apiKey) {
@@ -12,21 +17,15 @@ export function getOpenAIClient() {
   });
 }
 
-export async function sendMessage(prompt: string) {
+export async function sendMessage(messages: Message[]) {
   const client = getOpenAIClient();
   
   const response = await client.chat.completions.create({
     model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: "You are a helpful assistant. Format your responses using markdown for better readability. Use markdown features like headings, lists, code blocks, and emphasis where appropriate."
-      },
-      {
-        role: "system",
-        content: prompt
-      }
-    ],
+    messages: messages.map(msg => ({
+      role: msg.role,
+      content: msg.content
+    })),
     temperature: 0.7,
     max_tokens: 1000,
   });

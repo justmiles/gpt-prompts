@@ -20,7 +20,7 @@ interface ChatInterfaceProps {
 }
 
 interface Message {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
@@ -63,7 +63,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
   };
 
   React.useEffect(() => {
-    const storageKey = `${CHAT_STORAGE_PREFIX}${prompt}`;
+    const storageKey = `${CHAT_STORAGE_PREFIX}${promptSlug}`;
     const savedChat = localStorage.getItem(storageKey);
     if (savedChat) {
       try {
@@ -77,7 +77,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
         console.error('Failed to load chat history:', error);
       }
     }
-  }, [prompt]);
+  }, [promptSlug]);
 
   React.useEffect(() => {
     scrollToBottom();
@@ -95,13 +95,13 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
   }, []);
 
   const saveMessages = React.useCallback((newMessages: Message[]) => {
-    const storageKey = `${CHAT_STORAGE_PREFIX}${prompt}`;
+    const storageKey = `${CHAT_STORAGE_PREFIX}${promptSlug}`;
     const chatHistory: ChatHistory = {
       messages: newMessages,
       lastUpdated: Date.now()
     };
     localStorage.setItem(storageKey, JSON.stringify(chatHistory));
-  }, [prompt]);
+  }, [promptSlug]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,9 +109,19 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
 
     const userMessage = input.trim();
     setInput('');
-    const newMessages = [...messages, { role: 'user', content: userMessage }];
-    setMessages(newMessages);
-    saveMessages(newMessages);
+
+    // Create the full conversation history for the API
+    const conversationHistory: Message[] = [
+      // System message with the initial prompt
+      { role: 'system', content: prompt },
+      // Include all previous messages
+      ...messages,
+      // Add the new user message
+      { role: 'user', content: userMessage }
+    ];
+
+    setMessages(conversationHistory);
+    saveMessages(conversationHistory);
     setLoading(true);
 
     // Reset textarea height
@@ -124,13 +134,13 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
     }, 5000);
 
     try {
-      const response = await sendMessage(prompt + '\n\nUser: ' + userMessage);
-      const updatedMessages = [...newMessages, { role: 'assistant', content: response }];
+      const response = await sendMessage(conversationHistory);
+      const updatedMessages = [...conversationHistory, { role: 'assistant', content: response }];
       setMessages(updatedMessages);
       saveMessages(updatedMessages);
     } catch (error) {
       console.error('Failed to send message:', error);
-      const errorMessages = [...newMessages, { 
+      const errorMessages = [...conversationHistory, { 
         role: 'assistant', 
         content: 'Sorry, there was an error processing your request. Please try again.' 
       }];
@@ -157,7 +167,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
   };
 
   const handleClearChat = () => {
-    const storageKey = `${CHAT_STORAGE_PREFIX}${prompt}`;
+    const storageKey = `${CHAT_STORAGE_PREFIX}${promptSlug}`;
     localStorage.removeItem(storageKey);
     setMessages([]);
     setShowClearConfirm(false);
@@ -181,11 +191,14 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
 
   const containerClasses = fullPage
     ? "w-full h-full rounded-lg flex flex-col bg-white dark:bg-dark-700"
-    : "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+    : "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-0 md:p-4";
 
   const chatClasses = fullPage
     ? "w-full h-full flex flex-col"
-    : "bg-white dark:bg-dark-700 rounded-lg w-full max-w-4xl mx-4 flex flex-col h-[80vh]";
+    : "bg-white dark:bg-dark-700 rounded-lg w-full md:max-w-4xl mx-0 md:mx-4 flex flex-col h-screen md:h-[80vh]";
+
+  // Filter out system messages from display
+  const displayMessages = messages.filter(message => message.role !== 'system');
 
   return (
     <div className={containerClasses}>
@@ -207,7 +220,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
                   title="Back to prompt"
                 >
                   <FontAwesomeIcon icon={faArrowLeft} size="lg" />
-                  <span className="text-base font-medium">{title}</span>
+                  <span className="text-base font-medium truncate">{title}</span>
                 </Link>
               </div>
             </div>
@@ -232,7 +245,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.length === 0 && (
+          {displayMessages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
               <div className="text-6xl mb-4">
                 <FontAwesomeIcon icon={faRobot} className="text-olive-500 dark:text-olive-400" />
@@ -246,7 +259,7 @@ export function ChatInterface({ prompt, title, promptSlug, onClose, fullPage = f
               </p>
             </div>
           )}
-          {messages.map((message, index) => (
+          {displayMessages.map((message, index) => (
             <div key={index} className="w-full">
               <div className={clsx(
                 "w-full rounded-md p-3 relative group",
